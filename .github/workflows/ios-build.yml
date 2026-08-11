@@ -1,4 +1,4 @@
-name: Updated Maps and New Version
+name: Build iOS IPA
 
 on:
   push:
