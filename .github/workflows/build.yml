@@ -40,11 +40,14 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/TopviewLogger.apk
+
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: TopviewLogger-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/TopviewLogger.apk
 
   build-ios:
     name: Build iOS IPA
