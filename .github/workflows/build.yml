@@ -1,4 +1,4 @@
-name: Build iOS IPA
+name: Build App (iOS & Android)
 
 on:
   push:
@@ -6,9 +6,49 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Web Assets
+        run: npm run build
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TopviewLogger-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  build-ios:
+    name: Build iOS IPA
     runs-on: macos-latest
-    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -25,9 +65,8 @@ jobs:
       - name: Build Web Assets
         run: npm run build
 
-      - name: Initialize & Sync Capacitor
-        run: |
-          npx cap sync ios
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
 
       - name: Resolve Swift Packages
         run: |
@@ -49,7 +88,7 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             AD_HOC_CODE_SIGNING_ALLOWED=YES
 
-      - name: Package Unsigned IPA (Sideload Ready)
+      - name: Package Unsigned IPA
         run: |
           mkdir -p build/export/Payload
           APP_PATH=$(find build/App.xcarchive -name "*.app" | head -n 1)
@@ -59,17 +98,8 @@ jobs:
           zip -r TopviewLogger.ipa Payload
           rm -rf Payload
 
-      - name: Upload Build Artifacts
+      - name: Upload iOS IPA
         uses: actions/upload-artifact@v4
         with:
-          name: TopviewLogger-Stable-v10-IPA
+          name: TopviewLogger-IPA
           path: build/export/TopviewLogger.ipa
-# Build Trigger Mon Apr 20 23:05:16 EDT 2026
-# Trigger Fix Mon Apr 20 23:11:01 EDT 2026
-# Final Nuclear Trigger Mon Apr 20 23:16:05 EDT 2026
-# Nuclear XHR Trigger Mon Apr 20 23:20:12 EDT 2026
-# Feature Build Tue Apr 28 11:37:41 EDT 2026
-# Build V1.3.0 - Tue Apr 28 12:12:28 EDT 2026
-# Build V1.3.1 - Tue Apr 28 12:37:46 EDT 2026
-# Final with updates
-# Build Trigger Updated Maps and New Version
