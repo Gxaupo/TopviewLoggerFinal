@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+
+# iOS
+ios/App/App/public/
+ios/App/derived_data/
+ios/App/build/
+ios/App/Pods/
+*.xcuserstate
+xcuserdata/
+
+# Android
+android/app/build/
+android/app/src/main/assets/public/
+android/.gradle/
+*.apk
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
